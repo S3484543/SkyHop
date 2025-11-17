@@ -25,45 +25,54 @@ fun AppNavHost() {
     val navController = rememberNavController()
     val searchVM: SearchViewModel = viewModel()
 
-    NavHost(navController = navController, startDestination = Routes.SPLASH) {
-        composable(Routes.SPLASH) {
-            SplashScreen(onTimeout = {
-                navController.navigate(Routes.SEARCH) { popUpTo(Routes.SPLASH) { inclusive = true } }
-            })
+    NavHost(
+        navController = navController,
+        startDestination = Routes.SPLASH
+    ) {
+
+        composable(Routes.BOOK) {
+            BookingScreen(
+                selectedFlightId = "F001",
+                airline = "Air Tees",
+                from = "Newcastle",
+                to = "London",
+                date = "2025-11-10",
+                price = 49.99,
+                vm = bookingVM,
+                onBooked = { navController.navigate(Routes.MYBOOKINGS) }
+            )
         }
-        composable(Routes.SEARCH) {
-            SearchScreen(vm = searchVM, onSearch = {
-                searchVM.doSearch()
-                navController.navigate(Routes.RESULTS)
-            })
-        }
-        composable(Routes.RESULTS) {
-            ResultsScreen(vm = searchVM, onBack = { navController.popBackStack() })
+
+        composable(Routes.MYBOOKINGS) {
+            MyBookingsScreen(
+                vm = bookingVM,
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }
-NavHost(
-navController = navController,
-startDestination = Routes.SPLASH
-) {
-
-    composable(Routes.BOOK) {
-        BookingScreen(
-            selectedFlightId = "F001",
-            airline = "Air Tees",
-            from = "Newcastle",
-            to = "London",
-            date = "2025-11-10",
-            price = 49.99,
-            vm = bookingVM,
-            onBooked = { navController.navigate(Routes.MYBOOKINGS) }
-        )
-    }
-
-    composable(Routes.MYBOOKINGS) {
-        MyBookingsScreen(
-            vm = bookingVM,
-            onBack = { navController.popBackStack() }
-        )
-    }
-}
+//NavHost(
+//navController = navController,
+//startDestination = Routes.SPLASH
+//) {
+//
+//    composable(Routes.BOOK) {
+//        BookingScreen(
+//            selectedFlightId = "F001",
+//            airline = "Air Tees",
+//            from = "Newcastle",
+//            to = "London",
+//            date = "2025-11-10",
+//            price = 49.99,
+//            vm = bookingVM,
+//            onBooked = { navController.navigate(Routes.MYBOOKINGS) }
+//        )
+//    }
+//
+//    composable(Routes.MYBOOKINGS) {
+//        MyBookingsScreen(
+//            vm = bookingVM,
+//            onBack = { navController.popBackStack() }
+//        )
+//    }
+//}
