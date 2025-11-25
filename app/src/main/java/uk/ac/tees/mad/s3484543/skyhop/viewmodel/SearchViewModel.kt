@@ -11,17 +11,22 @@ class SearchViewModel : ViewModel() {
     var origin by mutableStateOf("")
     var destination by mutableStateOf("")
     var date by mutableStateOf("")
-    var passengers by mutableStateOf(1)
+//    var passengers by mutableStateOf(1)
 
+    var passengers by mutableStateOf("")
     var results by mutableStateOf<List<Flight>>(emptyList())
         private set
 
+    var selectedFlight: Flight? by mutableStateOf(null)
+
     fun doSearch() {
-        if (origin.isBlank() || destination.isBlank() || date.isBlank()) {
+        // Validate simple input
+        if (origin.isBlank() || destination.isBlank()) {
             results = emptyList()
             return
         }
-        results = MockFlightsRepository.searchFlights(origin.trim(), destination.trim(), date.trim())
+
+        results = MockFlightsRepository.searchFlights(origin, destination)
     }
 
     fun clearResults() { results = emptyList() }

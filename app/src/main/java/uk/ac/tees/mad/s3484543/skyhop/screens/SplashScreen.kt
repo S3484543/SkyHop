@@ -14,7 +14,7 @@ import androidx.compose.material3.MaterialTheme
 @Composable
 fun SplashScreen(onTimeout: () -> Unit) {
     LaunchedEffect(Unit) {
-        delay(1500)
+        delay(2500)
         onTimeout()
     }
 

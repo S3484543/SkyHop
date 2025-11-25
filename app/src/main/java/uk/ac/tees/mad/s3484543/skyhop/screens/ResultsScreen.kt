@@ -11,11 +11,16 @@ import uk.ac.tees.mad.s3484543.skyhop.viewmodel.SearchViewModel
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import uk.ac.tees.mad.s3484543.skyhop.navigation.Routes
 import uk.ac.tees.mad.s3484543.skyhop.ui.components.FlightCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ResultsScreen(vm: SearchViewModel, onBack: () -> Unit) {
+fun ResultsScreen(
+    vm: SearchViewModel,
+    onBack: () -> Unit,
+    onFlightSelected: (uk.ac.tees.mad.s3484543.skyhop.model.Flight) -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(title = { Text("Results") }, navigationIcon = {
@@ -35,7 +40,11 @@ fun ResultsScreen(vm: SearchViewModel, onBack: () -> Unit) {
             } else {
                 LazyColumn(contentPadding = PaddingValues(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(vm.results) { flight ->
-                        FlightCard(flight = flight)
+                        FlightCard(
+                            flight = flight,
+                            onClick = { onFlightSelected(flight) }
+                        )
+
                     }
                 }
             }

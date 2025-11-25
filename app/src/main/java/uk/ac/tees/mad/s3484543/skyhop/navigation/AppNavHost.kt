@@ -11,6 +11,7 @@ import uk.ac.tees.mad.s3484543.skyhop.screens.ResultsScreen
 import uk.ac.tees.mad.s3484543.skyhop.screens.SearchScreen
 import uk.ac.tees.mad.s3484543.skyhop.viewmodel.SearchViewModel
 import uk.ac.tees.mad.s3484543.skyhop.screens.SplashScreen
+import uk.ac.tees.mad.s3484543.skyhop.viewmodel.BookingViewModel
 
 
 object Routes {
@@ -24,23 +25,56 @@ object Routes {
 fun AppNavHost() {
     val navController = rememberNavController()
     val searchVM: SearchViewModel = viewModel()
+    val bookingVM: BookingViewModel = viewModel()
+
 
     NavHost(
         navController = navController,
         startDestination = Routes.SPLASH
     ) {
 
-        composable(Routes.BOOK) {
-            BookingScreen(
-                selectedFlightId = "F001",
-                airline = "Air Tees",
-                from = "Newcastle",
-                to = "London",
-                date = "2025-11-10",
-                price = 49.99,
-                vm = bookingVM,
-                onBooked = { navController.navigate(Routes.MYBOOKINGS) }
+        composable(Routes.SPLASH) {
+            SplashScreen(onTimeout = {
+                navController.navigate(Routes.SEARCH) {
+                    popUpTo(Routes.SPLASH) { inclusive = true }
+                }
+            })
+        }
+
+        composable(Routes.SEARCH) {
+            SearchScreen(
+                vm = searchVM,
+                onSearch = { navController.navigate(Routes.RESULTS) }
             )
+        }
+
+        composable(Routes.RESULTS) {
+            ResultsScreen(
+                vm = searchVM,
+                onBack = { navController.popBackStack() },
+                onFlightSelected = { flight ->
+                    // Store the selected flight in SearchViewModel or a shared ViewModel
+                    searchVM.selectedFlight = flight
+                    navController.navigate(Routes.BOOK)
+                }
+            )
+        }
+
+        composable(Routes.BOOK) {
+            val flight = searchVM.selectedFlight
+
+            if (flight != null) {
+                BookingScreen(
+                    selectedFlightId = flight.id,
+                    airline = flight.airline,
+                    from = flight.from,
+                    to = flight.to,
+                    date = flight.departTime,
+                    price = flight.price,
+                    vm = bookingVM,
+                    onBooked = { navController.navigate(Routes.MYBOOKINGS) }
+                )
+            }
         }
 
         composable(Routes.MYBOOKINGS) {
@@ -51,28 +85,3 @@ fun AppNavHost() {
         }
     }
 }
-//NavHost(
-//navController = navController,
-//startDestination = Routes.SPLASH
-//) {
-//
-//    composable(Routes.BOOK) {
-//        BookingScreen(
-//            selectedFlightId = "F001",
-//            airline = "Air Tees",
-//            from = "Newcastle",
-//            to = "London",
-//            date = "2025-11-10",
-//            price = 49.99,
-//            vm = bookingVM,
-//            onBooked = { navController.navigate(Routes.MYBOOKINGS) }
-//        )
-//    }
-//
-//    composable(Routes.MYBOOKINGS) {
-//        MyBookingsScreen(
-//            vm = bookingVM,
-//            onBack = { navController.popBackStack() }
-//        )
-//    }
-//}

@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import uk.ac.tees.mad.s3484543.skyhop.viewmodel.BookingViewModel
@@ -27,13 +28,14 @@ fun MyBookingsScreen(vm: BookingViewModel, onBack: () -> Unit) {
             )
         }
     ) { inner ->
+        val bookings = vm.bookings.collectAsState()
         LazyColumn(
             modifier = Modifier
                 .padding(inner)
                 .padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(vm.bookings.value) { booking ->
+            items(bookings.value) { booking ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)

@@ -52,8 +52,14 @@ fun BookingScreen(
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Confirm Booking (£${String.format(Locale.UK, "%.2f/", price)})")
-                }
+                Text("Confirm Booking (£${String.format(Locale.UK, "%.2f", price)})")
+            }
+            Button(
+                onClick = { onBooked() },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Go to My Bookings")
             }
         }
     }
+}

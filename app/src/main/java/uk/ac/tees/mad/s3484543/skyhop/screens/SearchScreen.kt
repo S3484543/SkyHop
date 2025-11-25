@@ -8,51 +8,65 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.text.input.KeyboardType
 import uk.ac.tees.mad.s3484543.skyhop.viewmodel.SearchViewModel
 
 @Composable
 fun SearchScreen(vm: SearchViewModel, onSearch: () -> Unit) {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp),
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text(text = "Search Flights", style = androidx.compose.material3.MaterialTheme.typography.headlineMedium)
+
+        Text(
+            text = "Search Flights",
+            style = MaterialTheme.typography.headlineMedium
+        )
 
         OutlinedTextField(
             value = vm.origin,
             onValueChange = { vm.origin = it },
-            label = { Text("Origin (e.g. Newcastle)") },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Origin (e.g., Newcastle)") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
         )
 
         OutlinedTextField(
             value = vm.destination,
             onValueChange = { vm.destination = it },
-            label = { Text("Destination (e.g. London)") },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Destination (e.g., London)") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
         )
 
         OutlinedTextField(
             value = vm.date,
             onValueChange = { vm.date = it },
-            label = { Text("Date (YYYY-MM-DD)") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Date YYYY-MM-DD") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
         )
 
         OutlinedTextField(
-            value = vm.passengers.toString(),
-            onValueChange = { vm.passengers = it.toIntOrNull() ?: 1 },
+            value = vm.passengers,
+            onValueChange = { vm.passengers = it },
             label = { Text("Passengers") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.width(140.dp)
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Button(onClick = { onSearch() }, modifier = Modifier.fillMaxWidth()) {
+        Button(
+            onClick = {
+                vm.doSearch()
+                onSearch()
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Text("Search")
         }
     }
