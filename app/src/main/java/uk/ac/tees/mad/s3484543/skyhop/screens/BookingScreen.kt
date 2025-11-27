@@ -31,6 +31,7 @@ fun BookingScreen(
                 .padding(16.dp)
         ) {
             Text("Flight: $from → $to")
+            Text("Date: $date")
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Passenger Name") })
             OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Email") })
