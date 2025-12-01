@@ -72,7 +72,8 @@ fun AppNavHost() {
                     date = flight.departTime,
                     price = flight.price,
                     vm = bookingVM,
-                    onBooked = { navController.navigate(Routes.MYBOOKINGS) }
+                    onBooked = { navController.navigate(Routes.MYBOOKINGS) },
+                    onBack = { navController.popBackStack()}
                 )
             }
         }

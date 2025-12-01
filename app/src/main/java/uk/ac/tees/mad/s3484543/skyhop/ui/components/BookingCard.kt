@@ -31,7 +31,7 @@ fun BookingCard(
 
             Text("${booking.from} → ${booking.to}")
             Text("Date: ${booking.date}")
-            Text("Passenger: ${booking.passengerName ?: "—"}")
+            Text("Passenger: ${booking.passengerName ?:"_"}")
             Text("Price: £${String.format(Locale.UK, "%.2f", booking.price)}")
 
             Spacer(modifier = Modifier.height(8.dp))

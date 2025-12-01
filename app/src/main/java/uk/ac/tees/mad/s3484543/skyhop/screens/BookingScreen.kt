@@ -1,6 +1,8 @@
 package uk.ac.tees.mad.s3484543.skyhop.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -19,12 +21,20 @@ fun BookingScreen(
     date: String,
     price: Double,
     vm: BookingViewModel,
-    onBooked: () -> Unit
+    onBooked: () -> Unit,
+    onBack: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
 
-    Scaffold(topBar = { TopAppBar(title = { Text("Booking Details") }) }) { inner ->
+    Scaffold(topBar = { TopAppBar(
+        title = { Text("Booking Details") },
+                navigationIcon = {
+            IconButton(onClick = onBack) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+            }
+        }
+    ) }) { inner ->
         Column(
             modifier = Modifier
                 .padding(inner)
