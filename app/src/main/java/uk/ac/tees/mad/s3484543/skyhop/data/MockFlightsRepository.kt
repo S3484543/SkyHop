@@ -9,7 +9,8 @@ object MockFlightsRepository {
         Flight("F002", "SkyHop Express", "Newcastle", "London", "10:00", "11:20", "1h20", 59.99),
         Flight("F003", "Northern Air", "Manchester", "Edinburgh", "09:15", "10:00", "45m", 39.99),
         Flight("F004", "Air Midlands", "Birmingham", "Paris", "13:45", "16:00", "2h15", 99.99),
-        Flight("F005", "EuroSky", "London", "Paris", "06:00", "08:10", "2h10", 89.50)
+        Flight("F005", "EuroSky", "London", "Paris", "06:00", "08:10", "2h10", 89.50),
+        Flight("F006","AirIndia","London","Hyderabad","08:35","08:00","11h30",349.99)
     )
 
     fun searchFlights(from: String, to: String): List<Flight> {

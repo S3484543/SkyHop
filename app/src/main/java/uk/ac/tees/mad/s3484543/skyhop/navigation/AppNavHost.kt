@@ -1,5 +1,6 @@
 package uk.ac.tees.mad.s3484543.skyhop.navigation
 
+import android.provider.ContactsContract
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -7,8 +8,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import uk.ac.tees.mad.s3484543.skyhop.screens.BookingScreen
 import uk.ac.tees.mad.s3484543.skyhop.screens.MyBookingsScreen
+import uk.ac.tees.mad.s3484543.skyhop.screens.PaymentScreen
+import uk.ac.tees.mad.s3484543.skyhop.screens.ProfileScreen
 import uk.ac.tees.mad.s3484543.skyhop.screens.ResultsScreen
 import uk.ac.tees.mad.s3484543.skyhop.screens.SearchScreen
+import uk.ac.tees.mad.s3484543.skyhop.screens.SettingsScreen
 import uk.ac.tees.mad.s3484543.skyhop.viewmodel.SearchViewModel
 import uk.ac.tees.mad.s3484543.skyhop.screens.SplashScreen
 import uk.ac.tees.mad.s3484543.skyhop.viewmodel.BookingViewModel
@@ -20,6 +24,10 @@ object Routes {
     const val RESULTS = "results"
     const val BOOK = "book"
     const val MYBOOKINGS = "mybookings"
+    const val PROFILE = "profile"
+    const val SETTINGS = "settings"
+    const val PAYMENT = "payment"
+
 }
 @Composable
 fun AppNavHost() {
@@ -73,7 +81,7 @@ fun AppNavHost() {
                     price = flight.price,
                     vm = bookingVM,
                     onBooked = { navController.navigate(Routes.MYBOOKINGS) },
-                    onBack = { navController.popBackStack()}
+                    onBack = { navController.popBackStack() }
                 )
             }
         }
@@ -83,6 +91,20 @@ fun AppNavHost() {
                 vm = bookingVM,
                 onBack = { navController.popBackStack() }
             )
+        }
+
+        composable(Routes.PROFILE) { ProfileScreen(onBack = { navController.popBackStack() })
+            composable(Routes.SETTINGS) { SettingsScreen(onBack = { navController.popBackStack() })
+                composable("${Routes.PAYMENT}/{price}") { backStack ->
+                    val priceArg = backStack.arguments?.getString("price")
+                    val price = priceArg?.toDoubleOrNull() ?: 0.0
+                    PaymentScreen(
+                        price = price,
+                        onPaid = { /* navigate back to bookings or results */ navController.popBackStack() },
+                        onBack = { navController.popBackStack() }
+                    )
+                }
+            }
         }
     }
 }

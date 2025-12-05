@@ -30,7 +30,7 @@ fun SearchScreen(vm: SearchViewModel, onSearch: () -> Unit) {
         OutlinedTextField(
             value = vm.origin,
             onValueChange = { vm.origin = it },
-            label = { Text("Origin (e.g., Newcastle)") },
+            label = { Text("Origin (e.g., London)") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
@@ -38,7 +38,7 @@ fun SearchScreen(vm: SearchViewModel, onSearch: () -> Unit) {
         OutlinedTextField(
             value = vm.destination,
             onValueChange = { vm.destination = it },
-            label = { Text("Destination (e.g., London)") },
+            label = { Text("Destination (e.g., Hyderabad)") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
@@ -46,7 +46,7 @@ fun SearchScreen(vm: SearchViewModel, onSearch: () -> Unit) {
         OutlinedTextField(
             value = vm.date,
             onValueChange = { vm.date = it },
-            label = { Text("Date YYYY-MM-DD") },
+            label = { Text("DD-MM-YYYY") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
