@@ -8,7 +8,7 @@ class BookingViewModelFactory (private val application: Application) : ViewModel
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(BookingViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return BookingViewModel(application) as T
+            return BookingViewModel() as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
     }

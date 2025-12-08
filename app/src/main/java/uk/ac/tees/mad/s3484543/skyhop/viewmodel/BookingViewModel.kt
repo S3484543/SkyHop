@@ -1,34 +1,20 @@
 package uk.ac.tees.mad.s3484543.skyhop.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.room.Room
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
-import uk.ac.tees.mad.s3484543.skyhop.data.AppDatabase
-import uk.ac.tees.mad.s3484543.skyhop.data.BookingRepository
+import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import uk.ac.tees.mad.s3484543.skyhop.model.Booking
 
-class BookingViewModel(application: Application) : AndroidViewModel(application) {
+class BookingViewModel : ViewModel() {
 
-    private val db = Room.databaseBuilder(
-        application,
-        AppDatabase::class.java,
-        "skyhop.db"
-    ).build()
+    private val _bookings = MutableStateFlow<List<Booking>>(emptyList())
+    val bookings: StateFlow<List<Booking>> = _bookings
 
-    private val repo = BookingRepository(db.bookingDao())
-
-    val bookings = repo.getAll()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    fun insert(booking: Booking) = viewModelScope.launch {
-        repo.insert(booking)
+    fun insert(booking: Booking) {
+        _bookings.value = _bookings.value + booking
     }
 
-    fun delete(booking: Booking) = viewModelScope.launch {
-        repo.delete(booking)
-    }
+    fun getLatestBooking(): Booking? = _bookings.value.lastOrNull()
+
+    fun getBookingById(id: String): Booking? = _bookings.value.find { it.id == id }
 }
