@@ -5,11 +5,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import uk.ac.tees.mad.s3484543.skyhop.model.Booking
 import uk.ac.tees.mad.s3484543.skyhop.screens.*
 import uk.ac.tees.mad.s3484543.skyhop.viewmodel.BookingViewModel
 import uk.ac.tees.mad.s3484543.skyhop.viewmodel.SearchViewModel
-import uk.ac.tees.mad.s3484543.skyhop.model.Booking
-
 
 object Routes {
     const val SPLASH = "splash"
@@ -29,18 +28,34 @@ fun AppNavHost() {
     val searchVM: SearchViewModel = viewModel()
     val bookingVM: BookingViewModel = viewModel()
 
-    NavHost(navController = navController, startDestination = Routes.SPLASH) {
+    NavHost(
+        navController = navController,
+        startDestination = Routes.SPLASH
+    ) {
 
         composable(Routes.SPLASH) {
-            SplashScreen(onTimeout = {
-                navController.navigate(Routes.SEARCH) {
-                    popUpTo(Routes.SPLASH) { inclusive = true }
+            SplashScreen(
+                onTimeout = {
+                    navController.navigate(Routes.SEARCH) {
+                        popUpTo(Routes.SPLASH) { inclusive = true }
+                    }
                 }
-            })
+            )
         }
 
         composable(Routes.SEARCH) {
-            SearchScreen(vm = searchVM, onSearch = { navController.navigate(Routes.RESULTS) })
+            SearchScreen(
+                vm = searchVM,
+                onSearch = { navController.navigate(Routes.RESULTS) },
+                onProfile = { navController.navigate(Routes.PROFILE) }
+            )
+        }
+
+        composable(Routes.PROFILE) {
+            ProfileScreen(
+                onBack = { navController.popBackStack() },
+                onSettings = { navController.navigate(Routes.SETTINGS) }
+            )
         }
 
         composable(Routes.RESULTS) {
@@ -65,7 +80,9 @@ fun AppNavHost() {
                     date = flight.departTime,
                     price = flight.price,
                     vm = bookingVM,
-                    onConfirmBooking = { navController.navigate(Routes.PAYMENT) },
+                    onConfirmBooking = {
+                        navController.navigate(Routes.PAYMENT)
+                    },
                     onBack = { navController.popBackStack() }
                 )
             }
@@ -75,16 +92,19 @@ fun AppNavHost() {
             val booking: Booking? = bookingVM.getLatestBooking()
             if (booking != null) {
                 PaymentScreen(
-                    booking = booking,
-                    onPaid = { navController.navigate("${Routes.TICKET}/${booking.id}") },
+                    price = booking.price,
+                    onPaid = {
+                        navController.navigate("${Routes.TICKET}/${booking.id}")
+                    },
                     onBack = { navController.popBackStack() }
                 )
             }
         }
 
         composable("${Routes.TICKET}/{bookingId}") { backStackEntry ->
-            val bookingId = backStackEntry.arguments?.getString("bookingId") ?: ""
-            val booking: Booking? = bookingVM.getBookingById(bookingId)
+            val bookingId = backStackEntry.arguments?.getString("bookingId")
+            val booking = bookingId?.let { bookingVM.getBookingById(it) }
+
             if (booking != null) {
                 TicketScreen(
                     booking = booking,
@@ -94,15 +114,16 @@ fun AppNavHost() {
         }
 
         composable(Routes.MYBOOKINGS) {
-            MyBookingsScreen(vm = bookingVM, onBack = { navController.popBackStack() })
-        }
-
-        composable(Routes.PROFILE) {
-            ProfileScreen(onBack = { navController.popBackStack() })
+            MyBookingsScreen(
+                vm = bookingVM,
+                onBack = { navController.popBackStack() }
+            )
         }
 
         composable(Routes.SETTINGS) {
-            SettingsScreen(onBack = { navController.popBackStack() })
+            SettingsScreen(
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }
