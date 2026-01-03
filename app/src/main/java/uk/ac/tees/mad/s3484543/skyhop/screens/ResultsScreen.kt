@@ -5,48 +5,42 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import uk.ac.tees.mad.s3484543.skyhop.viewmodel.SearchViewModel
-
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import uk.ac.tees.mad.s3484543.skyhop.navigation.Routes
+import uk.ac.tees.mad.s3484543.skyhop.model.Flight
 import uk.ac.tees.mad.s3484543.skyhop.ui.components.FlightCard
+import uk.ac.tees.mad.s3484543.skyhop.viewmodel.SearchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResultsScreen(
     vm: SearchViewModel,
     onBack: () -> Unit,
-    onFlightSelected: (uk.ac.tees.mad.s3484543.skyhop.model.Flight) -> Unit
+    onFlightSelected: (Flight) -> Unit
 ) {
+    val flights by vm.results.collectAsState()
+
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Results") }, navigationIcon = {
-                IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, contentDescription = "Back") }
-            })
-        }
-    ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            if (vm.results.isEmpty()) {
-                Column(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text("No results found for: ${vm.origin} → ${vm.destination}")
-                }
-            } else {
-                LazyColumn(contentPadding = PaddingValues(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(vm.results) { flight ->
-                        FlightCard(
-                            flight = flight,
-                            onClick = { onFlightSelected(flight) }
-                        )
-
+            TopAppBar(
+                title = { Text("Available Flights") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
+            )
+        }
+    ) { paddingValues ->
+        LazyColumn(modifier = Modifier.padding(paddingValues)) {
+            items(flights) { flight ->
+                FlightCard(
+                    flight = flight,
+                    onClick = { onFlightSelected(flight) }
+                )
             }
         }
     }

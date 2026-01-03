@@ -14,7 +14,9 @@ class BookingViewModel : ViewModel() {
         _bookings.value = _bookings.value + booking
     }
 
-    fun getLatestBooking(): Booking? = _bookings.value.lastOrNull()
+    fun getLatestBooking(): Booking? =
+        _bookings.value.lastOrNull()
 
-    fun getBookingById(id: String): Booking? = _bookings.value.find { it.id == id }
+    fun getBookingById(id: Int): Booking? =
+        _bookings.value.find { it.id == id }
 }

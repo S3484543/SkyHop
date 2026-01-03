@@ -1,21 +1,14 @@
 package uk.ac.tees.mad.s3484543.skyhop.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import uk.ac.tees.mad.s3484543.skyhop.datastore.ProfileDataStore
-import uk.ac.tees.mad.s3484543.skyhop.datastore.ProfileData
-import uk.ac.tees.mad.s3484543.skyhop.utils.base64ToBitmap
+import uk.ac.tees.mad.s3484543.skyhop.model.Booking
+import uk.ac.tees.mad.s3484543.skyhop.model.Passenger
 import uk.ac.tees.mad.s3484543.skyhop.viewmodel.BookingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,17 +20,20 @@ fun BookingScreen(
     to: String,
     date: String,
     price: Double,
+    passengerCount: Int,
     vm: BookingViewModel,
-    onConfirmBooking: () -> Unit,
+    onConfirmBooking: (Booking) -> Unit,
     onBack: () -> Unit
 ) {
-    val context = LocalContext.current
-    val profileStore = remember { ProfileDataStore(context) }
-    val profile by profileStore.profileFlow.collectAsState(
-        initial = ProfileData("", "", "")
-    )
+    val passengers = remember {
+        mutableStateListOf<Passenger>().apply {
+            repeat(passengerCount) {
+                add(Passenger())
+            }
+        }
+    }
 
-    val profileBitmap = base64ToBitmap(profile.photoBase64)
+    val totalPrice = price * passengerCount
 
     Scaffold(
         topBar = {
@@ -45,10 +41,7 @@ fun BookingScreen(
                 title = { Text("Booking Details") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
                     }
                 }
             )
@@ -57,45 +50,66 @@ fun BookingScreen(
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(padding)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            // ✅ PROFILE HEADER
-            if (profileBitmap != null) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        bitmap = profileBitmap!!.asImageBitmap(),
-                        contentDescription = "Profile Photo",
-                        modifier = Modifier
-                            .size(56.dp)
-                            .clip(CircleShape)
-                    )
-
-                    Spacer(modifier = Modifier.width(12.dp))
-
-                    Column {
-                        Text(profile.name, style = MaterialTheme.typography.titleMedium)
-                        Text(profile.email, style = MaterialTheme.typography.bodySmall)
-                    }
-                }
-            }
+            Text("Airline: $airline")
+            Text("Route: $from → $to")
+            Text("Date: $date")
+            Text("Passengers: $passengerCount")
 
             Divider()
 
-            Text("Flight: $from → $to")
-            Text("Date: $date")
-            Text("Price: £$price")
+            passengers.forEachIndexed { index, passenger ->
+
+                Text(
+                    text = "Passenger ${index + 1}",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                OutlinedTextField(
+                    value = passenger.name,
+                    onValueChange = { newValue ->
+                        passengers[index] = passenger.copy(name = newValue)
+                    },
+                    label = { Text("Name") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = passenger.email,
+                    onValueChange = { newValue ->
+                        passengers[index] = passenger.copy(email = newValue)
+                    },
+                    label = { Text("Email") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Divider()
+            }
 
             Button(
-                onClick = onConfirmBooking,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    val booking = Booking(
+                        flightId = selectedFlightId,
+                        airline = airline,
+                        from = from,
+                        to = to,
+                        date = date,
+                        passengerName = passengers.joinToString { it.name },
+                        passengerEmail = passengers.joinToString { it.email },
+                        passengerCount = passengerCount,
+                        price = totalPrice
+                    )
+
+                    vm.insert(booking)
+                    onConfirmBooking(booking)
+                }
             ) {
-                Text("Confirm Booking")
+                Text("Confirm (£${"%.2f".format(totalPrice)})")
             }
         }
     }

@@ -5,7 +5,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import uk.ac.tees.mad.s3484543.skyhop.model.Booking
 import uk.ac.tees.mad.s3484543.skyhop.screens.*
 import uk.ac.tees.mad.s3484543.skyhop.viewmodel.BookingViewModel
 import uk.ac.tees.mad.s3484543.skyhop.viewmodel.SearchViewModel
@@ -24,6 +23,7 @@ object Routes {
 
 @Composable
 fun AppNavHost() {
+
     val navController = rememberNavController()
     val searchVM: SearchViewModel = viewModel()
     val bookingVM: BookingViewModel = viewModel()
@@ -34,13 +34,11 @@ fun AppNavHost() {
     ) {
 
         composable(Routes.SPLASH) {
-            SplashScreen(
-                onTimeout = {
-                    navController.navigate(Routes.SEARCH) {
-                        popUpTo(Routes.SPLASH) { inclusive = true }
-                    }
+            SplashScreen {
+                navController.navigate(Routes.SEARCH) {
+                    popUpTo(Routes.SPLASH) { inclusive = true }
                 }
-            )
+            }
         }
 
         composable(Routes.SEARCH) {
@@ -48,13 +46,6 @@ fun AppNavHost() {
                 vm = searchVM,
                 onSearch = { navController.navigate(Routes.RESULTS) },
                 onProfile = { navController.navigate(Routes.PROFILE) }
-            )
-        }
-
-        composable(Routes.PROFILE) {
-            ProfileScreen(
-                onBack = { navController.popBackStack() },
-                onSettings = { navController.navigate(Routes.SETTINGS) }
             )
         }
 
@@ -79,6 +70,7 @@ fun AppNavHost() {
                     to = flight.to,
                     date = flight.departTime,
                     price = flight.price,
+                    passengerCount = searchVM.passengerCount(),
                     vm = bookingVM,
                     onConfirmBooking = {
                         navController.navigate(Routes.PAYMENT)
@@ -89,39 +81,44 @@ fun AppNavHost() {
         }
 
         composable(Routes.PAYMENT) {
-            val booking: Booking? = bookingVM.getLatestBooking()
-            if (booking != null) {
+            val booking = bookingVM.getLatestBooking()
+            booking?.let {
                 PaymentScreen(
-                    price = booking.price,
+                    price = it.price,
                     onPaid = {
-                        navController.navigate("${Routes.TICKET}/${booking.id}")
+                        navController.navigate(Routes.TICKET)
                     },
                     onBack = { navController.popBackStack() }
                 )
             }
         }
 
-        composable("${Routes.TICKET}/{bookingId}") { backStackEntry ->
-            val bookingId = backStackEntry.arguments?.getString("bookingId")
-            val booking = bookingId?.let { bookingVM.getBookingById(it) }
-
-            if (booking != null) {
+        composable(Routes.TICKET) {
+            val booking = bookingVM.getLatestBooking()
+            booking?.let {
                 TicketScreen(
-                    booking = booking,
+                    booking = it,
                     onBack = { navController.popBackStack() }
                 )
             }
         }
 
-        composable(Routes.MYBOOKINGS) {
-            MyBookingsScreen(
-                vm = bookingVM,
-                onBack = { navController.popBackStack() }
+        composable(Routes.PROFILE) {
+            ProfileScreen(
+                onBack = { navController.popBackStack() },
+                onSettings = { navController.navigate(Routes.SETTINGS) }
             )
         }
 
         composable(Routes.SETTINGS) {
             SettingsScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Routes.MYBOOKINGS) {
+            MyBookingsScreen(
+                vm = bookingVM,
                 onBack = { navController.popBackStack() }
             )
         }

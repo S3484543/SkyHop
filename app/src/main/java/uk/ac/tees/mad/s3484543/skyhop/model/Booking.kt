@@ -5,8 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "bookings")
 data class Booking(
-    @PrimaryKey val id: String = java.util.UUID.randomUUID().toString(),
-    // @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val flightId: String,
     val airline: String,
     val from: String,
@@ -14,5 +13,6 @@ data class Booking(
     val date: String,
     val passengerName: String,
     val passengerEmail: String,
+    val passengerCount: Int,
     val price: Double
 )
