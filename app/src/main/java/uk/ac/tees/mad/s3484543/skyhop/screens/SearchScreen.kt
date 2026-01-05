@@ -40,14 +40,14 @@ fun SearchScreen(
             OutlinedTextField(
                 value = vm.origin.value,
                 onValueChange = { vm.origin.value = it },
-                label = { Text("Origin (City or Airport Code)") },
+                label = { Text("Origin (Airport Code e.g. LHR)") },
                 modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
                 value = vm.destination.value,
                 onValueChange = { vm.destination.value = it },
-                label = { Text("Destination (City or Airport Code)") },
+                label = { Text("Destination ( Airport Code e.g. DEL)") },
                 modifier = Modifier.fillMaxWidth()
             )
 
